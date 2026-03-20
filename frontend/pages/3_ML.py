@@ -11,7 +11,6 @@ st.set_page_config(page_title="ML", layout='wide')
 @st.cache_data(ttl=10)
 def load_data():
     df = pd.read_csv("data/Iris.csv")
-    print("Загрузил снова...")
     return df
 
 df = load_data()
@@ -19,50 +18,64 @@ st.dataframe(df)
 
 st.divider()
 
-all_features = [f for f in df.columns if f != "Species"]
+col_1, col_2 = st.columns(2)
 
-features = st.multiselect(
-    "Select features",
-    all_features
-)
 
-if len(features) == 0:
-    features = all_features
+with col_1:
+    all_features = [f for f in df.columns if f != "Species"]
 
-X = df[features]
-y = df["Species"]
-
-train_size = st.slider("Train size", 0.5, 0.9, 0.7)
-
-if st.button("Train"):
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y,
-        train_size=train_size,
-        random_state=None
+    features = st.multiselect(
+        "Select features",
+        all_features
     )
 
-    model = LogisticRegression(max_iter=100)
+    if len(features) == 0:
+        features = all_features
 
-    model.fit(X_train, y_train)
+    X = df[features]
+    y = df["Species"]
 
-    st.session_state.model = model
-    st.session_state.X_test = X_test
-    st.session_state.y_test = y_test
+    train_size = st.slider("Train size", 0.5, 0.9, 0.7)
 
-    time.sleep(10)
+    if st.button("Train"):
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y,
+            train_size=train_size,
+            random_state=None
+        )
 
-    st.success("Model trained")
+        model = LogisticRegression()
 
-if st.button("Evaluate model"):
-    model = st.session_state.model
-    X_test = st.session_state.X_test
-    y_test = st.session_state.y_test
+        model.fit(X_train, y_train)
 
-    preds = model.predict(X_test)
+        st.session_state.model = model
+        st.session_state.X_test = X_test
+        st.session_state.y_test = y_test
 
-    acc = accuracy_score(y_test, preds)
+        # time.sleep(10)
 
-    st.metric("ACC",acc)
+        st.success("Model trained")
+
+with col_2:
+    if st.button("Evaluate model"):
+        model = st.session_state.model
+        X_test = st.session_state.X_test
+        y_test = st.session_state.y_test
+
+        preds = model.predict(X_test)
+
+        acc = accuracy_score(y_test, preds)
+
+        st.metric("Accuracy",acc)
+
+        st.metric("Accuracy", round(acc, 3))
+
+        cm = confusion_matrix(y_test, preds)
+
+        st.subheader("Confusion Matrix")
+        st.dataframe(cm)
+
+        st.bar_chart(pd.Series(preds).value_counts())
 
 expander = st.expander("DEBUG", expanded=False)
 with expander:
