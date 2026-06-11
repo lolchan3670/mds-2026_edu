@@ -5,6 +5,7 @@ conn.execute("""
 CREATE TABLE IF NOT EXISTS training_results (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     model_name TEXT NOT NULL,
+    model_type TEXT,
     accuracy REAL,
     model_path TEXT,
     created_at TEXT DEFAULT CURRENT_TIMESTAMP
