@@ -6,7 +6,8 @@ st.title("Models")
 
 def load_data():
     conn = sqlite3.connect("models.db")
-    df = pd.read_sql_query("SELECT * FROM training_results ORDER BY id DESC", conn)
+    df = pd.read_sql_query(
+        "SELECT * FROM training_results ORDER BY id DESC", conn)
     conn.close()
     return df
 
