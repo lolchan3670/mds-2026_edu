@@ -27,9 +27,6 @@ def train_model(filename: str, model_name: str, model_type: str, train_size: flo
     elif model_type == "random_forest":
         model = RandomForestClassifier(n_estimators=100, random_state=69)
 
-    elif model_type == "tree":
-        model = DecisionTreeClassifier()
-
     model.fit(X_train, y_train)
 
     pred = model.predict(X_test)

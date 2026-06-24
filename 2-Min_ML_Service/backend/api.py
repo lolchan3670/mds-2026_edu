@@ -5,7 +5,6 @@ from backend.ml.train import train_model
 
 app = FastAPI()
 
-
 class TrainRequest(BaseModel):
     filename: str
     model_name: str
